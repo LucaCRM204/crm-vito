@@ -6,7 +6,7 @@
     "dev:api": "ts-node --transpile-only src/server.ts",
     "dev:worker": "ts-node --transpile-only src/worker.ts",
     "build": "prisma generate && tsc",
-    "postbuild": "copyfiles -u 2 src/views/**/* dist"
+    "postbuild": "copyfiles -u 2 src/views/**/* dist",
     "start": "node dist/server.js"
   },
   "dependencies": {
