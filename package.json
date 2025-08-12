@@ -4,20 +4,33 @@
   "type": "commonjs",
   "scripts": {
     "dev:api": "ts-node --transpile-only src/server.ts",
-    "dev:worker": "ts-node --transpile-only src/worker.ts"
+    "dev:worker": "ts-node --transpile-only src/worker.ts",
+    "build": "prisma generate && tsc",
+    "postbuild": "copyfiles -u 1 src/views/**/* dist/views",
+    "start": "node dist/server.js"
   },
   "dependencies": {
     "@prisma/client": "^6.13.0",
-    "body-parser": "^1.20.2",
+    "bcryptjs": "^3.0.2",
+    "body-parser": "^1.20.3",
     "bullmq": "^4.10.4",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "express": "^4.18.3",
+    "express": "^4.21.2",
     "ioredis": "^5.4.1"
   },
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/body-parser": "^1.19.6",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.2.1",
+    "copyfiles": "^2.4.1",
     "prisma": "^6.13.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
-  }
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "postinstall": "prisma generate"
 }
