@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import { prisma } from './prisma';
 import { pickSupervisorByRotation, autoAssignVendor } from './assign';
 import { enqueueInactivity } from './worker'; // stub sin Redis
+import { Prisma } from '@prisma/client';
 
 dotenv.config();
 
@@ -95,14 +96,22 @@ app.get('/leads', async (_req: Request, res: Response) => {
 app.get('/app', (_req: Request, res: Response) => res.redirect('/app/leads'));
 
 app.get('/app/leads', async (req: Request, res: Response) => {
-  const q = (req.query.q as string)?.trim()?.toLowerCase() || '';
-  const where = q
+  const q = (req.query.q as string)?.trim() || '';
+
+  // Prisma exige QueryMode tipado
+  const insensitive: Prisma.StringFilter<"Lead"> = {
+    contains: q,
+    mode: 'insensitive' as Prisma.QueryMode,
+  };
+
+  // Tipamos explícitamente el where para evitar TS2322
+  const where: Prisma.LeadWhereInput = q
     ? {
         OR: [
-          { telefono: { contains: q } },
-          { nombre: { contains: q, mode: 'insensitive' } },
-          { marca: { contains: q, mode: 'insensitive' } },
-          { modelo: { contains: q, mode: 'insensitive' } },
+          { telefono: { contains: q } }, // si telefono es string en tu schema
+          { nombre: insensitive },
+          { marca: insensitive },
+          { modelo: insensitive },
         ],
       }
     : {};
