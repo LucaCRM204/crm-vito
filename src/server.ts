@@ -3,7 +3,6 @@ import bodyParser from 'body-parser';
 import path from 'path';
 import { prisma } from './prisma';
 import { pickSupervisorByRotation, autoAssignVendor } from './assign';
-import { enqueueInactivity } from './worker'; // dejamos igual por ahora
 
 const app = express();
 app.use(bodyParser.json());
