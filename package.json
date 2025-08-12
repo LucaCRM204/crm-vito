@@ -1,0 +1,23 @@
+{
+  "name": "crm-vito",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "scripts": {
+    "dev:api": "ts-node --transpile-only src/server.ts",
+    "dev:worker": "ts-node --transpile-only src/worker.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.13.0",
+    "body-parser": "^1.20.2",
+    "bullmq": "^4.10.4",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.18.3",
+    "ioredis": "^5.4.1"
+  },
+  "devDependencies": {
+    "prisma": "^6.13.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

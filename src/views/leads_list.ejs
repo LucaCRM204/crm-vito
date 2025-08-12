@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Leads - Vito</title>
+  <style>
+    body{font-family:system-ui,Arial;padding:16px;background:#0b0f14;color:#e6eef7}
+    a{color:#61dafb;text-decoration:none}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid #1f2937;vertical-align:top}
+    tr:hover{background:#111827}
+    .pill{padding:4px 8px;border-radius:12px;background:#1f2937}
+    .top{display:flex;gap:12px;align-items:center}
+    input{background:#111827;color:#e6eef7;border:1px solid #1f2937;padding:8px;border-radius:6px;width:340px}
+    button{padding:8px 12px;border:0;background:#2563eb;color:#fff;border-radius:6px;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div class="top">
+    <h2 style="margin:0">Leads</h2>
+    <form method="get" action="/app/leads" style="display:flex;gap:8px">
+      <input name="q" placeholder="Buscar por nombre, teléfono, marca o modelo" value="<%= q %>"/>
+      <button>Buscar</button>
+    </form>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Creado</th>
+        <th>Nombre</th>
+        <th>Teléfono</th>
+        <th>Marca / Modelo</th>
+        <th>Forma de pago</th>
+        <th>Estado</th>
+        <th>Supervisor</th>
+        <th>Vendedor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% leads.forEach(l => { %>
+        <tr>
+          <td><%= new Date(l.createdAt).toLocaleString() %></td>
+          <td><a href="/app/leads/<%= l.id %>"><%= l.nombre || '—' %></a></td>
+          <td><%= l.telefono %></td>
+          <td><%= (l.marca||'') %> <%= (l.modelo? ' / '+l.modelo : '') %></td>
+          <td><%= l.formaPago || '—' %></td>
+          <td><span class="pill"><%= l.estado %></span></td>
+          <td><%= l.supervisor?.nombre || '—' %></td>
+          <td><%= l.vendedor?.nombre || '—' %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</body>
+</html>

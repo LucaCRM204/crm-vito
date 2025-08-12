@@ -1,0 +1,93 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+/**
+ * ===== Enums =====
+ */
+
+enum Role {
+  GERENTE
+  SUPERVISOR
+  VENDEDOR
+}
+
+enum LeadEstado {
+  NUEVO
+  DERIVADO_SUP
+  ASIGNADO_VEND
+  EN_PROCESO
+  INCOMPLETO
+  GANADO
+  PERDIDO
+}
+
+/**
+ * ===== Modelos =====
+ */
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  nombre       String
+  password     String
+  role         Role
+  activo       Boolean  @default(true)
+  supervisorId String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relación jerárquica Supervisor -> Vendedores
+  vendedores User[] @relation("SupervisorVendedores")
+  supervisor User?  @relation("SupervisorVendedores", fields: [supervisorId], references: [id])
+
+  // Leads asignados (como supervisor o como vendedor)
+  assignmentsSup  Lead[] @relation("LeadSupervisor")
+  assignmentsVend Lead[] @relation("LeadVendedor")
+}
+
+model Lead {
+  id           String     @id @default(cuid())
+  telefono     String     @unique
+  nombre       String?
+  marca        String?
+  modelo       String?
+  formaPago    String?
+  infoUsado    String?
+  estado       LeadEstado @default(NUEVO)
+  supervisorId String?
+  vendedorId   String?
+  lastMsgAt    DateTime?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  // Relaciones con usuarios
+  supervisor User? @relation("LeadSupervisor", fields: [supervisorId], references: [id])
+  vendedor   User? @relation("LeadVendedor", fields: [vendedorId], references: [id])
+
+  // Historial / Notas
+  messages Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  leadId    String
+  fromBot   Boolean  @default(false) // true = nota interna
+  text      String
+  createdAt DateTime @default(now())
+
+  lead Lead @relation(fields: [leadId], references: [id])
+}
+
+model Rotation {
+  id        String   @id // e.g. "supervisor-rotation" o "sup:<idSupervisor>"
+  index     Int      @default(0) // puntero round-robin
+  updatedAt DateTime @updatedAt
+}
